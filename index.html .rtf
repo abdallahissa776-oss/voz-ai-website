@@ -1,0 +1,963 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2709
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica-Bold;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab560
+\pard\pardeftab560\slleading80\partightenfactor0
+
+\f0\b\fs29\fsmilli14630 \cf0 <!DOCTYPE html>\
+<html lang="es" id="html-root">\
+<head>\
+    <meta charset="UTF-8">\
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">\
+    <title>Voz AI | Transform Your Voice to English</title>\
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">\
+    <style>\
+        * \{\
+            margin: 0;\
+            padding: 0;\
+            box-sizing: border-box;\
+        \}\
+\
+        :root \{\
+            --bg-dark: #0a0a0f;\
+            --bg-card: #12121a;\
+            --accent: #6366f1;\
+            --accent-light: #818cf8;\
+            --text: #f8fafc;\
+            --text-muted: #94a3b8;\
+            --border: #1e293b;\
+            --success: #22c55e;\
+        \}\
+\
+        body \{\
+            font-family: 'Inter', sans-serif;\
+            background: var(--bg-dark);\
+            color: var(--text);\
+            line-height: 1.6;\
+            overflow-x: hidden;\
+        \}\
+\
+        h1, h2, h3 \{\
+            font-family: 'Space Grotesk', sans-serif;\
+        \}\
+\
+        /* Language Toggle Button */\
+        .lang-toggle \{\
+            position: fixed;\
+            top: 24px;\
+            right: 24px;\
+            z-index: 1000;\
+            background: var(--bg-card);\
+            border: 1px solid var(--border);\
+            border-radius: 100px;\
+            padding: 8px 8px;\
+            display: flex;\
+            gap: 4px;\
+            cursor: pointer;\
+            transition: all 0.3s;\
+        \}\
+\
+        .lang-toggle:hover \{\
+            border-color: var(--accent);\
+            transform: scale(1.05);\
+        \}\
+\
+        .lang-btn \{\
+            background: transparent;\
+            border: none;\
+            color: var(--text-muted);\
+            padding: 8px 16px;\
+            border-radius: 100px;\
+            font-weight: 600;\
+            font-size: 0.875rem;\
+            cursor: pointer;\
+            transition: all 0.3s;\
+        \}\
+\
+        .lang-btn.active \{\
+            background: var(--accent);\
+            color: white;\
+        \}\
+\
+        .lang-btn:hover:not(.active) \{\
+            color: var(--text);\
+        \}\
+\
+        /* Background Animation */\
+        .bg-gradient \{\
+            position: fixed;\
+            top: 0;\
+            left: 0;\
+            width: 100%;\
+            height: 100%;\
+            pointer-events: none;\
+            z-index: -1;\
+            background: \
+                radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),\
+                radial-gradient(circle at 80% 20%, rgba(129, 140, 248, 0.1) 0%, transparent 50%);\
+        \}\
+\
+        /* Container */\
+        .container \{\
+            max-width: 900px;\
+            margin: 0 auto;\
+            padding: 0 24px;\
+        \}\
+\
+        /* Hero */\
+        .hero \{\
+            min-height: 100vh;\
+            display: flex;\
+            flex-direction: column;\
+            justify-content: center;\
+            align-items: center;\
+            text-align: center;\
+            padding: 80px 24px;\
+            position: relative;\
+        \}\
+\
+        .badge \{\
+            display: inline-flex;\
+            align-items: center;\
+            gap: 8px;\
+            background: rgba(99, 102, 241, 0.1);\
+            border: 1px solid var(--accent);\
+            color: var(--accent-light);\
+            padding: 8px 16px;\
+            border-radius: 100px;\
+            font-size: 0.875rem;\
+            font-weight: 500;\
+            margin-bottom: 32px;\
+            animation: pulse 2s infinite;\
+        \}\
+\
+        @keyframes pulse \{\
+            0%, 100% \{ opacity: 1; \}\
+            50% \{ opacity: 0.7; \}\
+        \}\
+\
+        .badge::before \{\
+            content: '';\
+            width: 8px;\
+            height: 8px;\
+            background: var(--success);\
+            border-radius: 50%;\
+            animation: blink 1.5s infinite;\
+        \}\
+\
+        @keyframes blink \{\
+            0%, 100% \{ opacity: 1; \}\
+            50% \{ opacity: 0.3; \}\
+        \}\
+\
+        .hero h1 \{\
+            font-size: clamp(2.5rem, 8vw, 4.5rem);\
+            font-weight: 700;\
+            line-height: 1.1;\
+            margin-bottom: 24px;\
+            background: linear-gradient(135deg, #fff 0%, #818cf8 100%);\
+            -webkit-background-clip: text;\
+            -webkit-text-fill-color: transparent;\
+            background-clip: text;\
+        \}\
+\
+        .hero p \{\
+            font-size: 1.25rem;\
+            color: var(--text-muted);\
+            max-width: 600px;\
+            margin-bottom: 40px;\
+        \}\
+\
+        /* Audio Player Demo */\
+        .demo-section \{\
+            width: 100%;\
+            max-width: 600px;\
+            margin-bottom: 40px;\
+        \}\
+\
+        .demo-card \{\
+            background: var(--bg-card);\
+            border: 1px solid var(--border);\
+            border-radius: 24px;\
+            padding: 24px;\
+            margin-bottom: 16px;\
+            transition: transform 0.3s, border-color 0.3s;\
+        \}\
+\
+        .demo-card:hover \{\
+            transform: translateY(-4px);\
+            border-color: var(--accent);\
+        \}\
+\
+        .demo-label \{\
+            display: flex;\
+            align-items: center;\
+            gap: 12px;\
+            margin-bottom: 16px;\
+            font-size: 0.875rem;\
+            color: var(--text-muted);\
+            text-transform: uppercase;\
+            letter-spacing: 0.05em;\
+            font-weight: 600;\
+        \}\
+\
+        .demo-label::before \{\
+            content: '\uc0\u55356 \u56810 \u55356 \u56824 ';\
+            font-size: 1.25rem;\
+        \}\
+\
+        .demo-card.english .demo-label::before \{\
+            content: '\uc0\u55356 \u56812 \u55356 \u56807 ';\
+        \}\
+\
+        .audio-link \{\
+            display: flex;\
+            align-items: center;\
+            gap: 12px;\
+            background: rgba(99, 102, 241, 0.1);\
+            border: 1px solid var(--accent);\
+            border-radius: 12px;\
+            padding: 16px 20px;\
+            color: var(--text);\
+            text-decoration: none;\
+            font-weight: 500;\
+            transition: all 0.3s;\
+        \}\
+\
+        .audio-link:hover \{\
+            background: var(--accent);\
+            transform: translateY(-2px);\
+        \}\
+\
+        .play-icon \{\
+            width: 40px;\
+            height: 40px;\
+            background: var(--accent);\
+            border-radius: 50%;\
+            display: flex;\
+            align-items: center;\
+            justify-content: center;\
+            font-size: 1.2rem;\
+            flex-shrink: 0;\
+        \}\
+\
+        .audio-link:hover .play-icon \{\
+            background: white;\
+            color: var(--accent);\
+        \}\
+\
+        .arrow-down \{\
+            text-align: center;\
+            font-size: 2rem;\
+            color: var(--accent);\
+            margin: 16px 0;\
+            animation: bounce 2s infinite;\
+        \}\
+\
+        @keyframes bounce \{\
+            0%, 100% \{ transform: translateY(0); \}\
+            50% \{ transform: translateY(10px); \}\
+        \}\
+\
+        /* CTA Buttons */\
+        .cta-group \{\
+            display: flex;\
+            gap: 16px;\
+            flex-wrap: wrap;\
+            justify-content: center;\
+        \}\
+\
+        .btn-primary \{\
+            background: var(--accent);\
+            color: white;\
+            padding: 16px 32px;\
+            border-radius: 100px;\
+            text-decoration: none;\
+            font-weight: 600;\
+            font-size: 1.125rem;\
+            transition: all 0.3s;\
+            display: inline-flex;\
+            align-items: center;\
+            gap: 8px;\
+            border: 2px solid var(--accent);\
+            cursor: pointer;\
+        \}\
+\
+        .btn-primary:hover \{\
+            background: transparent;\
+            color: var(--accent-light);\
+            transform: translateY(-2px);\
+        \}\
+\
+        .btn-secondary \{\
+            background: transparent;\
+            color: var(--text);\
+            padding: 16px 32px;\
+            border-radius: 100px;\
+            text-decoration: none;\
+            font-weight: 600;\
+            font-size: 1.125rem;\
+            border: 2px solid var(--border);\
+            transition: all 0.3s;\
+        \}\
+\
+        .btn-secondary:hover \{\
+            border-color: var(--accent);\
+            color: var(--accent-light);\
+        \}\
+\
+        /* How It Works */\
+        .how-it-works \{\
+            padding: 100px 24px;\
+            background: var(--bg-card);\
+        \}\
+\
+        .section-title \{\
+            text-align: center;\
+            margin-bottom: 64px;\
+        \}\
+\
+        .section-title h2 \{\
+            font-size: 2.5rem;\
+            margin-bottom: 16px;\
+        \}\
+\
+        .section-title p \{\
+            color: var(--text-muted);\
+            font-size: 1.125rem;\
+        \}\
+\
+        .steps \{\
+            display: grid;\
+            gap: 24px;\
+            max-width: 600px;\
+            margin: 0 auto;\
+        \}\
+\
+        .step \{\
+            display: flex;\
+            gap: 24px;\
+            align-items: flex-start;\
+            padding: 24px;\
+            background: var(--bg-dark);\
+            border-radius: 16px;\
+            border: 1px solid var(--border);\
+        \}\
+\
+        .step-number \{\
+            width: 48px;\
+            height: 48px;\
+            background: var(--accent);\
+            border-radius: 12px;\
+            display: flex;\
+            align-items: center;\
+            justify-content: center;\
+            font-weight: 700;\
+            font-size: 1.25rem;\
+            flex-shrink: 0;\
+        \}\
+\
+        .step h3 \{\
+            font-size: 1.25rem;\
+            margin-bottom: 8px;\
+        \}\
+\
+        .step p \{\
+            color: var(--text-muted);\
+            font-size: 0.95rem;\
+        \}\
+\
+        /* Use Cases */\
+        .use-cases \{\
+            padding: 100px 24px;\
+        \}\
+\
+        .cases-grid \{\
+            display: grid;\
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));\
+            gap: 24px;\
+            margin-top: 48px;\
+        \}\
+\
+        .case-card \{\
+            background: var(--bg-card);\
+            border: 1px solid var(--border);\
+            border-radius: 20px;\
+            padding: 32px;\
+            transition: all 0.3s;\
+        \}\
+\
+        .case-card:hover \{\
+            border-color: var(--accent);\
+            transform: translateY(-4px);\
+        \}\
+\
+        .case-icon \{\
+            font-size: 2.5rem;\
+            margin-bottom: 16px;\
+        \}\
+\
+        .case-card h3 \{\
+            font-size: 1.25rem;\
+            margin-bottom: 12px;\
+        \}\
+\
+        .case-card p \{\
+            color: var(--text-muted);\
+            font-size: 0.95rem;\
+        \}\
+\
+        /* Pricing */\
+        .pricing \{\
+            padding: 100px 24px;\
+            background: var(--bg-card);\
+        \}\
+\
+        .price-card \{\
+            max-width: 500px;\
+            margin: 48px auto 0;\
+            background: var(--bg-dark);\
+            border: 2px solid var(--accent);\
+            border-radius: 24px;\
+            padding: 48px;\
+            text-align: center;\
+            position: relative;\
+            overflow: hidden;\
+        \}\
+\
+        .price-card::before \{\
+            content: '';\
+            position: absolute;\
+            top: 0;\
+            left: 0;\
+            right: 0;\
+            height: 4px;\
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));\
+        \}\
+\
+        .price-label \{\
+            color: var(--accent-light);\
+            font-weight: 600;\
+            text-transform: uppercase;\
+            letter-spacing: 0.1em;\
+            font-size: 0.875rem;\
+            margin-bottom: 16px;\
+        \}\
+\
+        .price \{\
+            font-size: 4rem;\
+            font-weight: 700;\
+            margin-bottom: 8px;\
+        \}\
+\
+        .price-note \{\
+            color: var(--text-muted);\
+            margin-bottom: 32px;\
+        \}\
+\
+        .features-list \{\
+            text-align: left;\
+            list-style: none;\
+            margin-bottom: 32px;\
+        \}\
+\
+        .features-list li \{\
+            padding: 12px 0;\
+            border-bottom: 1px solid var(--border);\
+            display: flex;\
+            align-items: center;\
+            gap: 12px;\
+        \}\
+\
+        .features-list li::before \{\
+            content: '\uc0\u10003 ';\
+            color: var(--success);\
+            font-weight: 700;\
+        \}\
+\
+        /* FAQ */\
+        .faq \{\
+            padding: 100px 24px;\
+        \}\
+\
+        .faq-list \{\
+            max-width: 700px;\
+            margin: 48px auto 0;\
+        \}\
+\
+        .faq-item \{\
+            border-bottom: 1px solid var(--border);\
+            padding: 24px 0;\
+        \}\
+\
+        .faq-question \{\
+            font-size: 1.125rem;\
+            font-weight: 600;\
+            cursor: pointer;\
+            display: flex;\
+            justify-content: space-between;\
+            align-items: center;\
+        \}\
+\
+        .faq-answer \{\
+            color: var(--text-muted);\
+            margin-top: 16px;\
+            line-height: 1.7;\
+        \}\
+\
+        /* CTA Section */\
+        .cta-section \{\
+            padding: 100px 24px;\
+            text-align: center;\
+            background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-card) 100%);\
+        \}\
+\
+        .cta-section h2 \{\
+            font-size: 2.5rem;\
+            margin-bottom: 24px;\
+        \}\
+\
+        .cta-section p \{\
+            color: var(--text-muted);\
+            font-size: 1.25rem;\
+            margin-bottom: 40px;\
+        \}\
+\
+        /* Footer */\
+        footer \{\
+            padding: 48px 24px;\
+            text-align: center;\
+            border-top: 1px solid var(--border);\
+            color: var(--text-muted);\
+        \}\
+\
+        .social-links \{\
+            display: flex;\
+            justify-content: center;\
+            gap: 24px;\
+            margin-bottom: 24px;\
+        \}\
+\
+        .social-links a \{\
+            color: var(--text-muted);\
+            text-decoration: none;\
+            font-size: 1.5rem;\
+            transition: color 0.3s;\
+        \}\
+\
+        .social-links a:hover \{\
+            color: var(--accent);\
+        \}\
+\
+        /* Mobile */\
+        @media (max-width: 768px) \{\
+            .lang-toggle \{\
+                top: 16px;\
+                right: 16px;\
+            \}\
+            \
+            .hero h1 \{\
+                font-size: 2.5rem;\
+            \}\
+            \
+            .price \{\
+                font-size: 3rem;\
+            \}\
+            \
+            .cta-group \{\
+                flex-direction: column;\
+                width: 100%;\
+            \}\
+            \
+            .btn-primary, .btn-secondary \{\
+                width: 100%;\
+                justify-content: center;\
+            \}\
+        \}\
+\
+        /* Smooth scroll */\
+        html \{\
+            scroll-behavior: smooth;\
+        \}\
+\
+        /* Selection */\
+        ::selection \{\
+            background: var(--accent);\
+            color: white;\
+        \}\
+    </style>\
+</head>\
+<body>\
+    <!-- Language Toggle -->\
+    <div class="lang-toggle">\
+        <button class="lang-btn active" onclick="setLanguage('es')" id="btn-es">ES</button>\
+        <button class="lang-btn" onclick="setLanguage('en')" id="btn-en">EN</button>\
+    </div>\
+\
+    <div class="bg-gradient"></div>\
+\
+    <!-- Hero -->\
+    <section class="hero">\
+        <div class="container">\
+            <div class="badge" data-i18n="badge">\
+                Tecnolog\'eda AI Disponible Ahora\
+            </div>\
+            \
+            <h1 data-i18n="hero-title">Tu Voz.<br>En Ingl\'e9s Fluido.</h1>\
+            \
+            <p data-i18n="hero-desc">\
+                Transformo tu voz espa\'f1ola en ingl\'e9s nativo usando inteligencia artificial. \
+                Sin clases. Sin acento forzado. Solo tu voz, hablando un nuevo idioma.\
+            </p>\
+\
+            <!-- Audio Demo -->\
+            <div class="demo-section">\
+                <div class="demo-card">\
+                    <div class="demo-label" data-i18n="demo-original">Original - Espa\'f1ol</div>\
+                    <a href="https://soundcloud.com/aone-15417325/whatsapp-audio-2026-02-24-at" target="_blank" class="audio-link">\
+                        <div class="play-icon">\uc0\u9654 </div>\
+                        <div>\
+                            <div style="font-weight: 600;">Escuchar voz original</div>\
+                            <div style="font-size: 0.875rem; color: var(--text-muted);">Click para reproducir en SoundCloud</div>\
+                        </div>\
+                    </a>\
+                </div>\
+\
+                <div class="arrow-down">\uc0\u8595 </div>\
+\
+                <div class="demo-card english">\
+                    <div class="demo-label" data-i18n="demo-transformed">Transformado - Ingl\'e9s</div>\
+                    <a href="https://soundcloud.com/aone-15417325/elevenlabs_2026-02" target="_blank" class="audio-link">\
+                        <div class="play-icon">\uc0\u9654 </div>\
+                        <div>\
+                            <div style="font-weight: 600;">Escuchar voz en ingl\'e9s</div>\
+                            <div style="font-size: 0.875rem; color: var(--text-muted);">Click para reproducir en SoundCloud</div>\
+                        </div>\
+                    </a>\
+                </div>\
+            </div>\
+\
+            <div class="cta-group">\
+                <a href="https://wa.me/905315235158" class="btn-primary" data-i18n="cta-demo">\
+                    Pedir Demo Gratis \uc0\u8594 \
+                </a>\
+                <a href="#como-funciona" class="btn-secondary" data-i18n="cta-how">\
+                    Ver C\'f3mo Funciona\
+                </a>\
+            </div>\
+        </div>\
+    </section>\
+\
+    <!-- How It Works -->\
+    <section class="how-it-works" id="como-funciona">\
+        <div class="container">\
+            <div class="section-title">\
+                <h2 data-i18n="how-title">C\'f3mo Funciona</h2>\
+                <p data-i18n="how-subtitle">Tres pasos simples para duplicar tu alcance</p>\
+            </div>\
+\
+            <div class="steps">\
+                <div class="step">\
+                    <div class="step-number">1</div>\
+                    <div>\
+                        <h3 data-i18n="step1-title">Grabas Tu Voz</h3>\
+                        <p data-i18n="step1-desc">Me env\'edas 3 minutos de audio hablando en espa\'f1ol. Puede ser por WhatsApp, email o subirlo aqu\'ed.</p>\
+                    </div>\
+                </div>\
+\
+                <div class="step">\
+                    <div class="step-number">2</div>\
+                    <div>\
+                        <h3 data-i18n="step2-title">IA Clona Tu Voz</h3>\
+                        <p data-i18n="step2-desc">La inteligencia artificial analiza tu tono, timbre y cadencia. Crea un modelo exacto de tu voz.</p>\
+                    </div>\
+                </div>\
+\
+                <div class="step">\
+                    <div class="step-number">3</div>\
+                    <div>\
+                        <h3 data-i18n="step3-title">Hablas Ingl\'e9s</h3>\
+                        <p data-i18n="step3-desc">Escribes texto en ingl\'e9s y generas audio con TU voz. Suenas fluido, natural, sin acento espa\'f1ol.</p>\
+                    </div>\
+                </div>\
+            </div>\
+        </div>\
+    </section>\
+\
+    <!-- Use Cases -->\
+    <section class="use-cases">\
+        <div class="container">\
+            <div class="section-title">\
+                <h2 data-i18n="use-title">Para Qui\'e9n Es</h2>\
+                <p data-i18n="use-subtitle">Creadores, empresarios y profesionales en Valencia</p>\
+            </div>\
+\
+            <div class="cases-grid">\
+                <div class="case-card">\
+                    <div class="case-icon">\uc0\u55356 \u57253 </div>\
+                    <h3 data-i18n="case1-title">YouTubers</h3>\
+                    <p data-i18n="case1-desc">Llega a 2,000 millones de angloparlantes. El mismo contenido, doble audiencia. Sin grabar dos veces.</p>\
+                </div>\
+\
+                <div class="case-card">\
+                    <div class="case-icon">\uc0\u55356 \u57312 </div>\
+                    <h3 data-i18n="case2-title">Agentes Inmobiliarios</h3>\
+                    <p data-i18n="case2-desc">Vende propiedades a extranjeros con videos en ingl\'e9s. Tu voz, tu personalidad, su idioma.</p>\
+                </div>\
+\
+                <div class="case-card">\
+                    <div class="case-icon">\uc0\u55357 \u56538 </div>\
+                    <h3 data-i18n="case3-title">Creadores de Cursos</h3>\
+                    <p data-i18n="case3-desc">Vende tu curso en USA, UK, Australia. Un curso, mercado global. Sin traductores ni doblaje.</p>\
+                </div>\
+\
+                <div class="case-card">\
+                    <div class="case-icon">\uc0\u55356 \u57241 \u65039 </div>\
+                    <h3 data-i18n="case4-title">Podcasters</h3>\
+                    <p data-i18n="case4-desc">Duplica tu podcast al ingl\'e9s. Mismo host, nueva audiencia. Mant\'e9n tu estilo y tu voz.</p>\
+                </div>\
+            </div>\
+        </div>\
+    </section>\
+\
+    <!-- Pricing -->\
+    <section class="pricing">\
+        <div class="container">\
+            <div class="section-title">\
+                <h2 data-i18n="price-title">Precio Simple</h2>\
+                <p data-i18n="price-subtitle">Sin suscripciones ocultas. Pagas una vez, usas para siempre.</p>\
+            </div>\
+\
+            <div class="price-card">\
+                <div class="price-label" data-i18n="price-label">Voz Completa</div>\
+                <div class="price">\'80200</div>\
+                <div class="price-note" data-i18n="price-note">Pago \'fanico \'95 Sin mensualidades</div>\
+\
+                <ul class="features-list">\
+                    <li data-i18n="feature1">Clon de tu voz (1 idioma: ingl\'e9s)</li>\
+                    <li data-i18n="feature2">Audio de alta calidad (estudio)</li>\
+                    <li data-i18n="feature3">Tutorial de uso incluido</li>\
+                    <li data-i18n="feature4">Soporte por WhatsApp</li>\
+                    <li data-i18n="feature5">Uso ilimitado para siempre</li>\
+                </ul>\
+\
+                <a href="https://wa.me/905315235158" class="btn-primary" style="width: 100%; justify-content: center;" data-i18n="price-cta">\
+                    Empezar Ahora \uc0\u8594 \
+                </a>\
+            </div>\
+        </div>\
+    </section>\
+\
+    <!-- FAQ -->\
+    <section class="faq">\
+        <div class="container">\
+            <div class="section-title">\
+                <h2 data-i18n="faq-title">Preguntas Frecuentes</h2>\
+            </div>\
+\
+            <div class="faq-list">\
+                <div class="faq-item">\
+                    <div class="faq-question" data-i18n="faq1-q">\
+                        \'bfSuena real o rob\'f3tico?\
+                        <span>+</span>\
+                    </div>\
+                    <div class="faq-answer" data-i18n="faq1-a">\
+                        Suena exactamente como t\'fa. La tecnolog\'eda actual es indistinguible de una grabaci\'f3n real. Escucha el demo arriba.\
+                    </div>\
+                </div>\
+\
+                <div class="faq-item">\
+                    <div class="faq-question" data-i18n="faq2-q">\
+                        \'bfNecesito saber ingl\'e9s?\
+                        <span>+</span>\
+                    </div>\
+                    <div class="faq-answer" data-i18n="faq2-a">\
+                        No. Escribes el texto en espa\'f1ol, lo traduces con Google/ChatGPT, y la IA habla ingl\'e9s por ti. O trabajas con un traductor.\
+                    </div>\
+                </div>\
+\
+                <div class="faq-item">\
+                    <div class="faq-question" data-i18n="faq3-q">\
+                        \'bfCu\'e1nto tarda?\
+                        <span>+</span>\
+                    </div>\
+                    <div class="faq-answer" data-i18n="faq3-a">\
+                        24-48 horas desde que recibo tu audio. Incluye revisiones si necesitas ajustes.\
+                    </div>\
+                </div>\
+\
+                <div class="faq-item">\
+                    <div class="faq-question" data-i18n="faq4-q">\
+                        \'bfEs legal?\
+                        <span>+</span>\
+                    </div>\
+                    <div class="faq-answer" data-i18n="faq4-a">\
+                        S\'ed. Es tu voz, t\'fa tienes los derechos. La usas para tu propio contenido. Es como usar un micr\'f3fono mejorado.\
+                    </div>\
+                </div>\
+            </div>\
+        </div>\
+    </section>\
+\
+    <!-- CTA -->\
+    <section class="cta-section">\
+        <div class="container">\
+            <h2 data-i18n="cta-title">\'bfListo para hablar ingl\'e9s?</h2>\
+            <p data-i18n="cta-subtitle">Demo gratis. Sin compromiso. Escucha tu voz en ingl\'e9s antes de pagar.</p>\
+            <a href="https://wa.me/905315235158" class="btn-primary" style="font-size: 1.25rem; padding: 20px 40px;" data-i18n="cta-final">\
+                Pedir Demo Gratis por WhatsApp \uc0\u8594 \
+            </a>\
+        </div>\
+    </section>\
+\
+    <!-- Footer -->\
+    <footer>\
+        <div class="social-links">\
+            <a href="#">\uc0\u55357 \u56568 </a>\
+            <a href="#">\uc0\u55357 \u56492 </a>\
+            <a href="#">\uc0\u55357 \u56551 </a>\
+        </div>\
+        <p data-i18n="footer">Hecho en Valencia \uc0\u55356 \u56810 \u55356 \u56824  | Tecnolog\'eda AI</p>\
+        <p style="margin-top: 8px; font-size: 0.875rem;">\'a9 2024 Voz AI</p>\
+    </footer>\
+\
+    <script>\
+        // Translation data\
+        const translations = \{\
+            es: \{\
+                "badge": "Tecnolog\'eda AI Disponible Ahora",\
+                "hero-title": "Tu Voz.<br>En Ingl\'e9s Fluido.",\
+                "hero-desc": "Transformo tu voz espa\'f1ola en ingl\'e9s nativo usando inteligencia artificial. Sin clases. Sin acento forzado. Solo tu voz, hablando un nuevo idioma.",\
+                "demo-original": "Original - Espa\'f1ol",\
+                "demo-transformed": "Transformado - Ingl\'e9s",\
+                "cta-demo": "Pedir Demo Gratis \uc0\u8594 ",\
+                "cta-how": "Ver C\'f3mo Funciona",\
+                "how-title": "C\'f3mo Funciona",\
+                "how-subtitle": "Tres pasos simples para duplicar tu alcance",\
+                "step1-title": "Grabas Tu Voz",\
+                "step1-desc": "Me env\'edas 3 minutos de audio hablando en espa\'f1ol. Puede ser por WhatsApp, email o subirlo aqu\'ed.",\
+                "step2-title": "IA Clona Tu Voz",\
+                "step2-desc": "La inteligencia artificial analiza tu tono, timbre y cadencia. Crea un modelo exacto de tu voz.",\
+                "step3-title": "Hablas Ingl\'e9s",\
+                "step3-desc": "Escribes texto en ingl\'e9s y generas audio con TU voz. Suenas fluido, natural, sin acento espa\'f1ol.",\
+                "use-title": "Para Qui\'e9n Es",\
+                "use-subtitle": "Creadores, empresarios y profesionales en Valencia",\
+                "case1-title": "YouTubers",\
+                "case1-desc": "Llega a 2,000 millones de angloparlantes. El mismo contenido, doble audiencia. Sin grabar dos veces.",\
+                "case2-title": "Agentes Inmobiliarios",\
+                "case2-desc": "Vende propiedades a extranjeros con videos en ingl\'e9s. Tu voz, tu personalidad, su idioma.",\
+                "case3-title": "Creadores de Cursos",\
+                "case3-desc": "Vende tu curso en USA, UK, Australia. Un curso, mercado global. Sin traductores ni doblaje.",\
+                "case4-title": "Podcasters",\
+                "case4-desc": "Duplica tu podcast al ingl\'e9s. Mismo host, nueva audiencia. Mant\'e9n tu estilo y tu voz.",\
+                "price-title": "Precio Simple",\
+                "price-subtitle": "Sin suscripciones ocultas. Pagas una vez, usas para siempre.",\
+                "price-label": "Voz Completa",\
+                "price-note": "Pago \'fanico \'95 Sin mensualidades",\
+                "feature1": "Clon de tu voz (1 idioma: ingl\'e9s)",\
+                "feature2": "Audio de alta calidad (estudio)",\
+                "feature3": "Tutorial de uso incluido",\
+                "feature4": "Soporte por WhatsApp",\
+                "feature5": "Uso ilimitado para siempre",\
+                "price-cta": "Empezar Ahora \uc0\u8594 ",\
+                "faq-title": "Preguntas Frecuentes",\
+                "faq1-q": "\'bfSuena real o rob\'f3tico?",\
+                "faq1-a": "Suena exactamente como t\'fa. La tecnolog\'eda actual es indistinguible de una grabaci\'f3n real. Escucha el demo arriba.",\
+                "faq2-q": "\'bfNecesito saber ingl\'e9s?",\
+                "faq2-a": "No. Escribes el texto en espa\'f1ol, lo traduces con Google/ChatGPT, y la IA habla ingl\'e9s por ti. O trabajas con un traductor.",\
+                "faq3-q": "\'bfCu\'e1nto tarda?",\
+                "faq3-a": "24-48 horas desde que recibo tu audio. Incluye revisiones si necesitas ajustes.",\
+                "faq4-q": "\'bfEs legal?",\
+                "faq4-a": "S\'ed. Es tu voz, t\'fa tienes los derechos. La usas para tu propio contenido. Es como usar un micr\'f3fono mejorado.",\
+                "cta-title": "\'bfListo para hablar ingl\'e9s?",\
+                "cta-subtitle": "Demo gratis. Sin compromiso. Escucha tu voz en ingl\'e9s antes de pagar.",\
+                "cta-final": "Pedir Demo Gratis por WhatsApp \uc0\u8594 ",\
+                "footer": "Hecho en Valencia \uc0\u55356 \u56810 \u55356 \u56824  | Tecnolog\'eda AI"\
+            \},\
+            en: \{\
+                "badge": "AI Technology Available Now",\
+                "hero-title": "Your Voice.<br>Fluent English.",\
+                "hero-desc": "I transform your Spanish voice into native English using artificial intelligence. No classes. No forced accent. Just your voice, speaking a new language.",\
+                "demo-original": "Original - Spanish",\
+                "demo-transformed": "Transformed - English",\
+                "cta-demo": "Get Free Demo \uc0\u8594 ",\
+                "cta-how": "See How It Works",\
+                "how-title": "How It Works",\
+                "how-subtitle": "Three simple steps to double your reach",\
+                "step1-title": "Record Your Voice",\
+                "step1-desc": "Send me 3 minutes of audio speaking Spanish. Via WhatsApp, email, or upload here.",\
+                "step2-title": "AI Clones Your Voice",\
+                "step2-desc": "Artificial intelligence analyzes your tone, timbre, and cadence. Creates an exact model of your voice.",\
+                "step3-title": "You Speak English",\
+                "step3-desc": "Type English text and generate audio with YOUR voice. Sound fluent, natural, without a Spanish accent.",\
+                "use-title": "Who It's For",\
+                "use-subtitle": "Creators, entrepreneurs, and professionals in Valencia",\
+                "case1-title": "YouTubers",\
+                "case1-desc": "Reach 2 billion English speakers. Same content, double audience. No recording twice.",\
+                "case2-title": "Real Estate Agents",\
+                "case2-desc": "Sell properties to foreigners with English videos. Your voice, your personality, their language.",\
+                "case3-title": "Course Creators",\
+                "case3-desc": "Sell your course in USA, UK, Australia. One course, global market. No translators or dubbing.",\
+                "case4-title": "Podcasters",\
+                "case4-desc": "Duplicate your podcast to English. Same host, new audience. Keep your style and voice.",\
+                "price-title": "Simple Pricing",\
+                "price-subtitle": "No hidden subscriptions. Pay once, use forever.",\
+                "price-label": "Complete Voice",\
+                "price-note": "One-time payment \'95 No monthly fees",\
+                "feature1": "Voice clone (1 language: English)",\
+                "feature2": "High-quality audio (studio)",\
+                "feature3": "Usage tutorial included",\
+                "feature4": "WhatsApp support",\
+                "feature5": "Unlimited use forever",\
+                "price-cta": "Start Now \uc0\u8594 ",\
+                "faq-title": "Frequently Asked Questions",\
+                "faq1-q": "Does it sound real or robotic?",\
+                "faq1-a": "It sounds exactly like you. Current technology is indistinguishable from a real recording. Listen to the demo above.",\
+                "faq2-q": "Do I need to know English?",\
+                "faq2-a": "No. Write text in Spanish, translate with Google/ChatGPT, and AI speaks English for you. Or work with a translator.",\
+                "faq3-q": "How long does it take?",\
+                "faq3-a": "24-48 hours from when I receive your audio. Includes revisions if you need adjustments.",\
+                "faq4-q": "Is it legal?",\
+                "faq4-a": "Yes. It's your voice, you own the rights. You use it for your own content. It's like using an enhanced microphone.",\
+                "cta-title": "Ready to speak English?",\
+                "cta-subtitle": "Free demo. No commitment. Hear your voice in English before paying.",\
+                "cta-final": "Get Free Demo via WhatsApp \uc0\u8594 ",\
+                "footer": "Made in Valencia \uc0\u55356 \u56810 \u55356 \u56824  | AI Technology"\
+            \}\
+        \};\
+\
+        // Language switcher function\
+        function setLanguage(lang) \{\
+            // Update buttons\
+            document.getElementById('btn-es').classList.toggle('active', lang === 'es');\
+            document.getElementById('btn-en').classList.toggle('active', lang === 'en');\
+            \
+            // Update all elements with data-i18n attribute\
+            document.querySelectorAll('[data-i18n]').forEach(element => \{\
+                const key = element.getAttribute('data-i18n');\
+                if (translations[lang][key]) \{\
+                    element.innerHTML = translations[lang][key];\
+                \}\
+            \});\
+            \
+            // Update HTML lang attribute\
+            document.documentElement.lang = lang;\
+        \}\
+\
+        // FAQ toggle\
+        document.querySelectorAll('.faq-question').forEach(q => \{\
+            q.addEventListener('click', () => \{\
+                const answer = q.nextElementSibling;\
+                const isHidden = answer.style.display === 'none' || !answer.style.display;\
+                answer.style.display = isHidden ? 'block' : 'none';\
+                q.querySelector('span').textContent = isHidden ? '-' : '+';\
+            \});\
+        \});\
+\
+        // Initialize FAQ as collapsed\
+        document.querySelectorAll('.faq-answer').forEach(a => a.style.display = 'none');\
+    </script>\
+</body>\
+</html>}
