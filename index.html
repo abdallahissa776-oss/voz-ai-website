@@ -681,7 +681,7 @@
             
             <h1 data-i18n="hero-title">Tu Voz.<br>En Inglés Fluido.</h1>
             
-            <p>Transforma tu voz española a inglés nativo usando inteligencia artificial. Sin clases. Sin acento forzado. Solo tu voz, hablando un nuevo idioma.</p>
+            <p data-i18n="hero-desc">Transforma tu voz española a inglés nativo usando inteligencia artificial. Sin clases. Sin acento forzado. Solo tu voz, hablando un nuevo idioma.</p>
 
             <div class="demo-section">
                 <div class="demo-card">
@@ -747,8 +747,8 @@
                 <div class="step">
                     <div class="step-number">1</div>
                     <div>
-                        <h3>Graba Tu Voz</h3>
-                        <p>Envía 3 minutos de audio hablando en español. Puede ser por WhatsApp, email o subirlo aquí.</p>
+                        <h3 data-i18n="step1-title">Graba Tu Voz</h3>
+                        <p data-i18n="step1-desc">Envía 3 minutos de audio hablando en español. Puede ser por WhatsApp, email o subirlo aquí.</p>
                     </div>
                 </div>
 
@@ -763,8 +763,8 @@
                 <div class="step">
                     <div class="step-number">3</div>
                     <div>
-                        <h3>Habla Inglés</h3>
-                        <p>escribe un texto en inglés y genera un audio con TU voz. Suena fluido, natural, sin acento español.</p>
+                        <h3 data-i18n="step3-title">Habla Inglés</h3>
+                        <p data-i18n="step3-desc">escribe un texto en inglés y genera un audio con TU voz. Suena fluido, natural, sin acento español.</p>
                     </div>
                 </div>
             </div>
@@ -892,6 +892,7 @@
             es: {
                 "badge": "Tecnología AI Disponible Ahora",
                 "hero-title": "Tu Voz.<br>En Inglés Fluido.",
+                "hero-desc": "Transforma tu voz española a inglés nativo usando inteligencia artificial. Sin clases. Sin acento forzado. Solo tu voz, hablando un nuevo idioma.",
                 "demo-original": "Original - Español",
                 "demo-transformed": "Transformado - Inglés",
                 "audio-title-es": "Escuchar voz original",
@@ -902,8 +903,12 @@
                 "cta-how": "Ver Cómo Funciona",
                 "how-title": "Cómo Funciona",
                 "how-subtitle": "Tres pasos simples para duplicar tu alcance",
+                "step1-title": "Graba Tu Voz",
+                "step1-desc": "Envía 3 minutos de audio hablando en español. Puede ser por WhatsApp, email o subirlo aquí.",
                 "step2-title": "IA Clona Tu Voz",
                 "step2-desc": "La inteligencia artificial analiza tu tono, timbre y cadencia. Crea un modelo exacto de tu voz.",
+                "step3-title": "Habla Inglés",
+                "step3-desc": "escribe un texto en inglés y genera un audio con TU voz. Suena fluido, natural, sin acento español.",
                 "use-title": "Para Quién Es",
                 "use-subtitle": "Creadores, empresarios y profesionales en Valencia",
                 "case1-title": "YouTubers",
@@ -942,6 +947,7 @@
             en: {
                 "badge": "AI Technology Available Now",
                 "hero-title": "Your Voice.<br>Fluent English.",
+                "hero-desc": "Transform your Spanish voice into native English using artificial intelligence. No classes. No forced accent. Just your voice, speaking a new language.",
                 "demo-original": "Original - Spanish",
                 "demo-transformed": "Transformed - English",
                 "audio-title-es": "Listen to original voice",
@@ -952,8 +958,12 @@
                 "cta-how": "See How It Works",
                 "how-title": "How It Works",
                 "how-subtitle": "Three simple steps to double your reach",
+                "step1-title": "Record Your Voice",
+                "step1-desc": "Send 3 minutes of audio speaking Spanish. Via WhatsApp, email, or upload here.",
                 "step2-title": "AI Clones Your Voice",
                 "step2-desc": "Artificial intelligence analyzes your tone, timbre, and cadence. Creates an exact model of your voice.",
+                "step3-title": "Speak English",
+                "step3-desc": "Type English text and generate audio with YOUR voice. Sounds fluent, natural, without a Spanish accent.",
                 "use-title": "Who It's For",
                 "use-subtitle": "Creators, entrepreneurs, and professionals in Valencia",
                 "case1-title": "YouTubers",
@@ -1101,3 +1111,16 @@
     </script>
 </body>
 </html>
+
+# Save to file
+with open('/mnt/kimi/output/index.html', 'w', encoding='utf-8') as f:
+    f.write(html_content)
+
+print("Fixed! Added i18n attributes to all Spanish text.")
+print("\nAdded translations for:")
+print("• hero-desc: Transform your Spanish voice into native English...")
+print("• step1-title: Record Your Voice")
+print("• step1-desc: Send 3 minutes of audio speaking Spanish...")
+print("• step3-title: Speak English")
+print("• step3-desc: Type English text and generate audio with YOUR voice. Sounds fluent...")
+print("\nNow all text properly switches between Spanish and English when clicking ES/EN buttons.")
