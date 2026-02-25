@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es" id="html-root">
 <head>
@@ -472,17 +473,15 @@
             border-color: var(--accent);
         }
 
-        .price-card.featured::before {
-            content: 'RECOMENDADO';
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: var(--accent);
+        .first-month-badge {
+            display: inline-block;
+            background: var(--success);
             color: white;
-            padding: 8px 16px;
-            font-size: 0.75rem;
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 0.875rem;
             font-weight: 600;
-            border-bottom-left-radius: 12px;
+            margin-bottom: 16px;
         }
 
         .price-label {
@@ -817,13 +816,15 @@
                 <div class="price-card featured">
                     <div class="price-label" data-i18n="price-label">Plan Completo</div>
                     
+                    <div class="first-month-badge" data-i18n="first-month-badge">✓ Primer mes incluido</div>
+                    
                     <div class="price-setup">€200</div>
-                    <div class="price-note" data-i18n="price-setup-note">Pago inicial de configuración</div>
+                    <div class="price-note" data-i18n="price-setup-note">Configuración + primer mes</div>
                     
                     <div class="price-divider"></div>
                     
-                    <div class="price-monthly">+ €50<span style="font-size: 1rem; color: var(--text-muted);">/mes</span></div>
-                    <div class="price-note" data-i18n="price-monthly-note">Mantenimiento y soporte continuo</div>
+                    <div class="price-monthly">€50<span style="font-size: 1rem; color: var(--text-muted);">/mes</span></div>
+                    <div class="price-note" data-i18n="price-monthly-note">Desde el mes 2</div>
 
                     <ul class="features-list">
                         <li data-i18n="feature1">Clon de tu voz (1 idioma: inglés)</li>
@@ -848,7 +849,7 @@
             <div class="faq-list">
                 <div class="faq-item">
                     <div class="faq-question" data-i18n="faq1-q">¿Por qué €200 + €50/mes? <span>+</span></div>
-                    <div class="faq-answer" data-i18n="faq1-a">Los €200 cubren la configuración inicial y clonación de tu voz. Los €50/mes incluyen mantenimiento, soporte técnico, actualizaciones y generación ilimitada de audio.</div>
+                    <div class="faq-answer" data-i18n="faq1-a">Los €200 cubren la configuración inicial, clonación de tu voz y el primer mes de servicio. Los €50/mes empiezan desde el segundo mes e incluyen mantenimiento, soporte técnico, actualizaciones y generación ilimitada de audio.</div>
                 </div>
 
                 <div class="faq-item">
@@ -884,7 +885,7 @@
             <a href="#">📧</a>
         </div>
         <p data-i18n="footer">Hecho en Valencia 🇪🇸 | Tecnología AI</p>
-        <p style="margin-top: 8px; font-size: 0.875rem;">© 2026 Voz AI</p>
+        <p style="margin-top: 8px; font-size: 0.875rem;">© 2024 Voz AI</p>
     </footer>
 
     <script>
@@ -922,8 +923,9 @@
                 "price-title": "Inversión",
                 "price-subtitle": "Empieza hoy, crece mensualmente",
                 "price-label": "Plan Completo",
-                "price-setup-note": "Pago inicial de configuración",
-                "price-monthly-note": "Mantenimiento y soporte continuo",
+                "first-month-badge": "✓ Primer mes incluido",
+                "price-setup-note": "Configuración + primer mes",
+                "price-monthly-note": "Desde el mes 2",
                 "feature1": "Clon de tu voz (1 idioma: inglés)",
                 "feature2": "Audio de alta calidad (estudio)",
                 "feature3": "Soporte por WhatsApp",
@@ -932,7 +934,7 @@
                 "price-cta": "Empezar Ahora →",
                 "faq-title": "Preguntas Frecuentes",
                 "faq1-q": "¿Por qué €200 + €50/mes?",
-                "faq1-a": "Los €200 cubren la configuración inicial y clonación de tu voz. Los €50/mes incluyen mantenimiento, soporte técnico, actualizaciones y generación ilimitada de audio.",
+                "faq1-a": "Los €200 cubren la configuración inicial, clonación de tu voz y el primer mes de servicio. Los €50/mes empiezan desde el segundo mes e incluyen mantenimiento, soporte técnico, actualizaciones y generación ilimitada de audio.",
                 "faq2-q": "¿Puedo cancelar cuando quiera?",
                 "faq2-a": "Sí, sin permanencia. Cancela cuando quieras y conservas tu voz clonada. Solo pierdes el soporte y actualizaciones.",
                 "faq3-q": "¿Qué incluye el soporte mensual?",
@@ -977,8 +979,9 @@
                 "price-title": "Investment",
                 "price-subtitle": "Start today, grow monthly",
                 "price-label": "Complete Plan",
-                "price-setup-note": "Initial setup payment",
-                "price-monthly-note": "Ongoing maintenance & support",
+                "first-month-badge": "✓ First month included",
+                "price-setup-note": "Setup + first month",
+                "price-monthly-note": "From month 2",
                 "feature1": "Voice clone (1 language: English)",
                 "feature2": "High-quality audio (studio)",
                 "feature3": "WhatsApp support",
@@ -987,7 +990,7 @@
                 "price-cta": "Start Now →",
                 "faq-title": "Frequently Asked Questions",
                 "faq1-q": "Why €200 + €50/month?",
-                "faq1-a": "€200 covers initial setup and voice cloning. €50/month includes maintenance, technical support, updates, and unlimited audio generation.",
+                "faq1-a": "€200 covers initial setup, voice cloning, and your first month of service. €50/month starts from month 2 and includes maintenance, technical support, updates, and unlimited audio generation.",
                 "faq2-q": "Can I cancel anytime?",
                 "faq2-a": "Yes, no commitment. Cancel anytime and keep your cloned voice. You only lose support and updates.",
                 "faq3-q": "What's included in monthly support?",
