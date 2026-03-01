@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dalsan Group - Fleet Command Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0f172a; }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-item.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+        }
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-planned { background: #fef3c7; color: #92400e; }
+        .status-loaded { background: #dbeafe; color: #1e40af; }
+        .status-enroute { background: #c7d2fe; color: #3730a3; }
+        .status-delivered { background: #d1fae5; color: #065f46; }
+        .status-paid { background: #bbf7d0; color: #166534; }
+        .hover-row:hover { background: rgba(59, 130, 246, 0.1); }
+        .animate-fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .truck-card { transition: all 0.3s ease; }
+        .truck-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .metric-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sidebar {
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+        }
+    </style>
+<base target="_blank">
+</head>
+<body class="text-gray-100">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="sidebar w-64 flex-shrink-0 border-r border-gray-800">
+            <div class="p-6">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-truck text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-xl tracking-tight">DALSAN</h1>
+                        <p class="text-xs text-gray-400">Fleet Command</p>
+                    </div>
+                </div>
+
+                <nav class="space-y-2">
+                    <button onclick="showSection('dashboard')" id="nav-dashboard" class="nav-item active w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all">
+                        <i class="fas fa-chart-line w-5"></i>
+                        <span class="font-medium">Dashboard</span>
+                    </button>
+                    <button onclick="showSection('trips')" id="nav-trips" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 transition-all">
+                        <i class="fas fa-route w-5"></i>
+                        <span class="font-medium">Trips</span>
+                        <span id="trip-count" class="ml-auto bg-blue-600 text-xs px-2 py-1 rounded-full">0</span>
+                    </button>
+                    <button onclick="showSection('trucks')" id="nav-trucks" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 transition-all">
+                        <i class="fas fa-truck-moving w-5"></i>
+                        <span class="font-medium">Fleet</span>
+                        <span class="ml-auto text-xs text-gray-400">45</span>
+                    </button>
+                    <button onclick="showSection('expenses')" id="nav-expenses" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 transition-all">
+                        <i class="fas fa-wallet w-5"></i>
+                        <span class="font-medium">Expenses</span>
+                    </button>
+                    <button onclick="showSection('payroll')" id="nav-payroll" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 transition-all">
+                        <i class="fas fa-money-bill-wave w-5"></i>
+                        <span class="font-medium">Payroll</span>
+                    </button>
+                    <button onclick="showSection('employees')" id="nav-employees" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 transition-all">
+                        <i class="fas fa-users w-5"></i>
+                        <span class="font-medium">Team</span>
+                    </button>
+                    <button onclick="showSection('whatsapp')" id="nav-whatsapp" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 transition-all">
+                        <i class="fab fa-whatsapp w-5 text-green-400"></i>
+                        <span class="font-medium">WhatsApp</span>
+                    </button>
+                </nav>
+            </div>
+
+            <div class="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center text-sm font-bold">
+                        DG
+                    </div>
+                    <div>
+                        <p class="font-medium text-sm">Dalsan Group</p>
+                        <p class="text-xs text-gray-400">Admin</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto bg-gray-900">
+            <!-- Header -->
+            <header class="sticky top-0 z-40 glass-panel border-b border-gray-800 px-8 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 id="page-title" class="text-2xl font-bold gradient-text">Dashboard Overview</h2>
+                        <p id="current-date" class="text-sm text-gray-400 mt-1"></p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <button onclick="openModal('newTrip')" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2">
+                            <i class="fas fa-plus"></i>
+                            New Trip
+                        </button>
+                        <button onclick="openModal('newExpense')" class="bg-gray-800 hover:bg-gray-700 text-white px-6 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2">
+                            <i class="fas fa-minus-circle"></i>
+                            Add Expense
+                        </button>
+                        <div class="relative">
+                            <i class="fas fa-bell text-gray-400 text-xl cursor-pointer hover:text-white transition"></i>
+                            <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Section -->
+            <section id="section-dashboard" class="p-8 animate-fade-in">
+                <!-- Key Metrics -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="metric-card rounded-2xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-money-bill-wave text-blue-400 text-xl"></i>
+                            </div>
+                            <span class="text-green-400 text-sm font-medium">+12.5%</span>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-1">Total Revenue</p>
+                        <h3 class="text-3xl font-bold text-white">ZMW <span id="total-revenue">0</span></h3>
+                    </div>
+
+                    <div class="metric-card rounded-2xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-chart-pie text-purple-400 text-xl"></i>
+                            </div>
+                            <span class="text-red-400 text-sm font-medium">-5.2%</span>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-1">Net Profit</p>
+                        <h3 class="text-3xl font-bold text-white">ZMW <span id="net-profit">0</span></h3>
+                    </div>
+
+                    <div class="metric-card rounded-2xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-truck text-green-400 text-xl"></i>
+                            </div>
+                            <span class="text-green-400 text-sm font-medium">Active</span>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-1">Active Trips</p>
+                        <h3 class="text-3xl font-bold text-white" id="active-trips">0</h3>
+                    </div>
+
+                    <div class="metric-card rounded-2xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-gas-pump text-orange-400 text-xl"></i>
+                            </div>
+                            <span class="text-gray-400 text-sm font-medium">This Month</span>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-1">Diesel Cost</p>
+                        <h3 class="text-3xl font-bold text-white">ZMW <span id="diesel-cost">0</span></h3>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    <div class="lg:col-span-2 glass-panel rounded-2xl p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="font-bold text-lg">Revenue vs Expenses</h3>
+                            <select class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1 text-sm">
+                                <option>Last 6 Months</option>
+                                <option>This Year</option>
+                            </select>
+                        </div>
+                        <canvas id="revenueChart" height="250"></canvas>
+                    </div>
+
+                    <div class="glass-panel rounded-2xl p-6">
+                        <h3 class="font-bold text-lg mb-6">Top Performing Trucks</h3>
+                        <div id="top-trucks-list" class="space-y-4">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity & Alerts -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="glass-panel rounded-2xl p-6">
+                        <h3 class="font-bold text-lg mb-4">Recent Trips</h3>
+                        <div id="recent-trips-list" class="space-y-3">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+
+                    <div class="glass-panel rounded-2xl p-6">
+                        <h3 class="font-bold text-lg mb-4">Pending Actions</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                                <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium">3 Invoices Pending Payment</p>
+                                    <p class="text-xs text-gray-400">Total: ZMW 45,200</p>
+                                </div>
+                                <button class="text-yellow-400 text-sm hover:underline">View</button>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                                <i class="fas fa-tools text-red-400"></i>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium">BAL951 Due for Service</p>
+                                    <p class="text-xs text-gray-400">Mileage: 125,000 km</p>
+                                </div>
+                                <button class="text-red-400 text-sm hover:underline">Schedule</button>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                                <i class="fab fa-whatsapp text-blue-400"></i>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium">5 WhatsApp Messages Queued</p>
+                                    <p class="text-xs text-gray-400">Ready to send</p>
+                                </div>
+                                <button class="text-blue-400 text-sm hover:underline">Send All</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Trips Section -->
+            <section id="section-trips" class="hidden p-8 animate-fade-in">
+                <div class="glass-panel rounded-2xl p-6 mb-6">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="relative">
+                                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                <input type="text" id="trip-search" placeholder="Search trips..." 
+                                    class="bg-gray-800 border border-gray-700 rounded-lg pl-10 pr-4 py-2 w-64 focus:outline-none focus:border-blue-500">
+                            </div>
+                            <select id="trip-filter-type" class="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2">
+                                <option value="">All Types</option>
+                                <option value="Export">Export</option>
+                                <option value="LocalLog">Local</option>
+                            </select>
+                            <select id="trip-filter-status" class="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2">
+                                <option value="">All Status</option>
+                                <option value="Planned">Planned</option>
+                                <option value="Loaded">Loaded</option>
+                                <option value="En route">En Route</option>
+                                <option value="Delivered">Delivered</option>
+                                <option value="Paid">Paid</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="exportTrips()" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg text-sm">
+                                <i class="fas fa-download mr-2"></i>Export
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-2xl overflow-hidden">
+                    <table class="w-full">
+                        <thead class="bg-gray-800/50">
+                            <tr>
+                                <th class="text-left py-4 px-6 font-semibold text-sm">Trip ID</th>
+                                <th class="text-left py-4 px-6 font-semibold text-sm">Date</th>
+                                <th class="text-left py-4 px-6 font-semibold text-sm">Truck</th>
+                                <th class="text-left py-4 px-6 font-semibold text-sm">Driver</th>
+                                <th class="text-left py-4 px-6 font-semibold text-sm">Route</th>
+                                <th class="text-left py-4 px-6 font-semibold text-sm">Product</th>
+                                <th class="text-right py-4 px-6 font-semibold text-sm">Net (ZMW)</th>
+                                <th class="text-center py-4 px-6 font-semibold text-sm">Status</th>
+                                <th class="text-center py-4 px-6 font-semibold text-sm">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trips-table-body" class="divide-y divide-gray-800">
+                            <!-- Dynamic content -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Trucks/Fleet Section -->
+            <section id="section-trucks" class="hidden p-8 animate-fade-in">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="trucks-grid">
+                    <!-- Dynamic truck cards -->
+                </div>
+            </section>
+
+            <!-- Expenses Section -->
+            <section id="section-expenses" class="hidden p-8 animate-fade-in">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    <div class="glass-panel rounded-2xl p-6">
+                        <h3 class="font-bold text-lg mb-4">Expense Breakdown</h3>
+                        <canvas id="expenseChart" height="200"></canvas>
+                    </div>
+                    <div class="lg:col-span-2 glass-panel rounded-2xl p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="font-bold text-lg">Recent Transactions</h3>
+                            <div class="flex gap-2">
+                                <button class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm">All</button>
+                                <button class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg text-sm">Expenses</button>
+                                <button class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg text-sm">Advances</button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-800/50">
+                                    <tr>
+                                        <th class="text-left py-3 px-4 text-sm">Date</th>
+                                        <th class="text-left py-3 px-4 text-sm">Entity/Truck</th>
+                                        <th class="text-left py-3 px-4 text-sm">Description</th>
+                                        <th class="text-left py-3 px-4 text-sm">Category</th>
+                                        <th class="text-right py-3 px-4 text-sm">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="expenses-table-body" class="divide-y divide-gray-800">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Payroll Section -->
+            <section id="section-payroll" class="hidden p-8 animate-fade-in">
+                <div class="glass-panel rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="font-bold text-lg">Employee Payroll</h3>
+                        <select class="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2">
+                            <option>January 2026</option>
+                            <option>December 2025</option>
+                        </select>
+                    </div>
+                    <table class="w-full">
+                        <thead class="bg-gray-800/50">
+                            <tr>
+                                <th class="text-left py-4 px-6 font-semibold text-sm">Employee</th>
+                                <th class="text-left py-4 px-6 font-semibold text-sm">Position</th>
+                                <th class="text-left py-4 px-6 font-semibold text-sm">Truck</th>
+                                <th class="text-right py-4 px-6 font-semibold text-sm">Gross Pay</th>
+                                <th class="text-right py-4 px-6 font-semibold text-sm">Deductions</th>
+                                <th class="text-right py-4 px-6 font-semibold text-sm">Net Pay</th>
+                                <th class="text-center py-4 px-6 font-semibold text-sm">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payroll-table-body" class="divide-y divide-gray-800">
+                            <!-- Dynamic content -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Employees Section -->
+            <section id="section-employees" class="hidden p-8 animate-fade-in">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="employees-grid">
+                    <!-- Dynamic employee cards -->
+                </div>
+            </section>
+
+            <!-- WhatsApp Section -->
+            <section id="section-whatsapp" class="hidden p-8 animate-fade-in">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="glass-panel rounded-2xl p-6">
+                        <h3 class="font-bold text-lg mb-4">Message Templates</h3>
+                        <div class="space-y-3">
+                            <div class="p-4 bg-green-500/10 border border-green-500/20 rounded-lg cursor-pointer hover:bg-green-500/20 transition">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <i class="fab fa-whatsapp text-green-400"></i>
+                                    <span class="font-medium">Trip Loaded</span>
+                                </div>
+                                <p class="text-sm text-gray-400">Notify client when truck is loaded</p>
+                            </div>
+                            <div class="p-4 bg-green-500/10 border border-green-500/20 rounded-lg cursor-pointer hover:bg-green-500/20 transition">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <i class="fab fa-whatsapp text-green-400"></i>
+                                    <span class="font-medium">En Route</span>
+                                </div>
+                                <p class="text-sm text-gray-400">Update client with ETA</p>
+                            </div>
+                            <div class="p-4 bg-green-500/10 border border-green-500/20 rounded-lg cursor-pointer hover:bg-green-500/20 transition">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <i class="fab fa-whatsapp text-green-400"></i>
+                                    <span class="font-medium">Delivered</span>
+                                </div>
+                                <p class="text-sm text-gray-400">Confirm delivery completion</p>
+                            </div>
+                            <div class="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg cursor-pointer hover:bg-yellow-500/20 transition">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <i class="fab fa-whatsapp text-yellow-400"></i>
+                                    <span class="font-medium">Payment Reminder</span>
+                                </div>
+                                <p class="text-sm text-gray-400">Send invoice payment reminder</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel rounded-2xl p-6">
+                        <h3 class="font-bold text-lg mb-4">WhatsApp Outbox</h3>
+                        <div id="whatsapp-outbox" class="space-y-3 max-h-96 overflow-y-auto">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- New Trip Modal -->
+    <div id="modal-newTrip" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50">
+        <div class="bg-gray-900 border border-gray-700 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-800 flex items-center justify-between">
+                <h3 class="text-xl font-bold">Create New Trip</h3>
+                <button onclick="closeModal('newTrip')" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Trip Type</label>
+                        <select id="new-trip-type" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2">
+                            <option value="Export">Export</option>
+                            <option value="LocalLog">Local</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Date</label>
+                        <input type="date" id="new-trip-date" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Truck</label>
+                        <select id="new-trip-truck" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2">
+                            <!-- Dynamic options -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Driver</label>
+                        <select id="new-trip-driver" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2">
+                            <!-- Dynamic options -->
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Origin</label>
+                        <input type="text" id="new-trip-origin" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2" placeholder="e.g., DAR">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Destination</label>
+                        <input type="text" id="new-trip-destination" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2" placeholder="e.g., LUSAKA">
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Product</label>
+                        <select id="new-trip-product" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2">
+                            <option>PMS</option>
+                            <option>AGO</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Quantity</label>
+                        <input type="number" id="new-trip-qty" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2" placeholder="Liters">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Rate</label>
+                        <input type="number" id="new-trip-rate" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2" placeholder="ZMW">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Diesel Cost</label>
+                        <input type="number" id="new-trip-diesel" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2" placeholder="ZMW">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Mileage Cost</label>
+                        <input type="number" id="new-trip-mileage" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2" placeholder="ZMW">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Client</label>
+                    <select id="new-trip-client" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2">
+                        <option>LAKE OIL</option>
+                        <option>MERU</option>
+                        <option>NAPA</option>
+                        <option>STORM ENERGY</option>
+                        <option>GAZMAN</option>
+                    </select>
+                </div>
+            </div>
+            <div class="p-6 border-t border-gray-800 flex justify-end gap-3">
+                <button onclick="closeModal('newTrip')" class="px-6 py-2 rounded-lg border border-gray-700 hover:bg-gray-800">Cancel</button>
+                <button onclick="saveTrip()" class="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700">Create Trip</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Expense Modal -->
+    <div id="modal-newExpense" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50">
+        <div class="bg-gray-900 border border-gray-700 rounded-2xl w-full max-w-lg">
+            <div class="p-6 border-b border-gray-800 flex items-center justify-between">
+                <h3 class="text-xl font-bold">Add Expense</h3>
+                <button onclick="closeModal('newExpense')" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2">Date</label>
+                    <input type="date" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Entity/Truck</label>
+                    <input type="text" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2" placeholder="e.g., BAL951 or Workshop">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Description</label>
+                    <input type="text" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2" placeholder="What was this for?">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Category</label>
+                        <select class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2">
+                            <option>Expenses</option>
+                            <option>Spare Parts</option>
+                            <option>Fuel</option>
+                            <option>Workshop</option>
+                            <option>Documents</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Amount (ZMW)</label>
+                        <input type="number" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2" placeholder="0.00">
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 border-t border-gray-800 flex justify-end gap-3">
+                <button onclick="closeModal('newExpense')" class="px-6 py-2 rounded-lg border border-gray-700 hover:bg-gray-800">Cancel</button>
+                <button onclick="closeModal('newExpense')" class="px-6 py-2 rounded-lg bg-red-600 hover:bg-red-700">Add Expense</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Store (simulating the Excel data)
+        let appData = {
+            trips: [],
+            transactions: [],
+            trucks: [],
+            employees: [],
+            payroll: [],
+            clients: []
+        };
+
+        // Initialize with sample data based on the Excel structure
+        function initializeData() {
+            // Trucks from Excel
+            const truckNumbers = [
+                'BAX2284ZM', 'BAP8001ZM', 'BCE4683', 'BAX2283', 'BAL8026', 
+                'BCC2310', 'BAL951', 'BCB4683', 'BAL7568ZM', 'BCD8644',
+                'BAV6725', 'BAL2910', 'BCF8689', 'ACZ6450', 'AJE2175ZM'
+            ];
+
+            appData.trucks = truckNumbers.map((truck, idx) => ({
+                id: idx + 1,
+                truck_no_std: truck,
+                truck_no_base: truck.replace('ZM', ''),
+                status: 'Active',
+                driver: '',
+                total_trips: Math.floor(Math.random() * 50) + 10,
+                revenue: Math.floor(Math.random() * 500000) + 100000,
+                expenses: Math.floor(Math.random() * 300000) + 50000,
+                last_service: '2026-01-15'
+            }));
+
+            // Employees from Excel
+            const employeeNames = [
+                'TEDDY SAMPILI', 'NICHOLAS NKONDEKUYA', 'DANIEL SIKAMBA', 
+                'AMON MASAMWISHA', 'SIMON ZIMBA', 'CHILUFYA ELVIS', 
+                'DENNIS MUTALE', 'MUKUKA CHISANGA', 'MUCHI MATABA'
+            ];
+
+            appData.employees = employeeNames.map((name, idx) => ({
+                id: idx + 1,
+                name: name,
+                position: 'Fuel Tank Driver',
+                truck: truckNumbers[idx] || '',
+                phone: '26097' + Math.floor(Math.random() * 1000000),
+                status: 'Active',
+                salary: 4000
+            }));
+
+            // Sample trips based on Excel data patterns
+            const routes = [
+                {origin: 'DAR', destination: 'LUSAKA', product: 'PMS'},
+                {origin: 'DAR', destination: 'NDOLA', product: 'PMS'},
+                {origin: 'BEIRA', destination: 'LUMUMBASHI', product: 'PMS'},
+                {origin: 'LUSAKA', destination: 'KABWE', product: 'AGO'},
+                {origin: 'DAR', destination: 'MPIKA', product: 'AGO'}
+            ];
+
+            const statuses = ['Planned', 'Loaded', 'En route', 'Delivered', 'Paid'];
+
+            for (let i = 0; i < 25; i++) {
+                const route = routes[Math.floor(Math.random() * routes.length)];
+                const truck = truckNumbers[Math.floor(Math.random() * truckNumbers.length)];
+                const gross = Math.floor(Math.random() * 8000) + 2000;
+                const diesel = Math.floor(gross * 0.3);
+                const mileage = Math.floor(Math.random() * 2000) + 500;
+                const net = gross - diesel - (mileage * 0.5);
+
+                appData.trips.push({
+                    id: i + 1,
+                    trip_type: Math.random() > 0.5 ? 'Export' : 'LocalLog',
+                    date: new Date(2026, 0, Math.floor(Math.random() * 30) + 1).toISOString().split('T')[0],
+                    truck_no_std: truck,
+                    truck_no_base: truck.replace('ZM', ''),
+                    driver_name: employeeNames[Math.floor(Math.random() * employeeNames.length)],
+                    origin: route.origin,
+                    destination: route.destination,
+                    product: route.product,
+                    cargo_qty: Math.floor(Math.random() * 50) + 30,
+                    rate: Math.floor(Math.random() * 50) + 100,
+                    gross_revenue: gross,
+                    diesel_cost: diesel,
+                    mileage_cost: mileage,
+                    net: net,
+                    status: statuses[Math.floor(Math.random() * statuses.length)],
+                    client: ['LAKE OIL', 'MERU', 'NAPA', 'STORM ENERGY'][Math.floor(Math.random() * 4)]
+                });
+            }
+
+            // Sample transactions
+            const expenseCategories = ['Spare Parts', 'Fuel', 'Workshop', 'Documents', 'Tires', 'Insurance'];
+            for (let i = 0; i < 20; i++) {
+                appData.transactions.push({
+                    id: i + 1,
+                    date: new Date(2026, 0, Math.floor(Math.random() * 30) + 1).toISOString().split('T')[0],
+                    entity: truckNumbers[Math.floor(Math.random() * truckNumbers.length)],
+                    description: expenseCategories[Math.floor(Math.random() * expenseCategories.length)] + ' expense',
+                    category: expenseCategories[Math.floor(Math.random() * expenseCategories.length)],
+                    amount: Math.floor(Math.random() * 5000) + 500,
+                    type: 'OUT'
+                });
+            }
+
+            // Payroll data
+            appData.payroll = appData.employees.map(emp => ({
+                ...emp,
+                gross_pay: 4242.70,
+                deductions: 242.21,
+                net_pay: 4000.00,
+                status: 'Paid'
+            }));
+        }
+
+        // UI Functions
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('section').forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            // Show selected section
+            document.getElementById('section-' + sectionName).classList.remove('hidden');
+
+            // Update nav
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.getElementById('nav-' + sectionName).classList.add('active');
+
+            // Update title
+            const titles = {
+                'dashboard': 'Dashboard Overview',
+                'trips': 'Trip Management',
+                'trucks': 'Fleet Management',
+                'expenses': 'Expense Tracking',
+                'payroll': 'Payroll Management',
+                'employees': 'Team Directory',
+                'whatsapp': 'WhatsApp Integration'
+            };
+            document.getElementById('page-title').textContent = titles[sectionName];
+
+            // Load section data
+            if (sectionName === 'trips') loadTrips();
+            if (sectionName === 'trucks') loadTrucks();
+            if (sectionName === 'expenses') loadExpenses();
+            if (sectionName === 'payroll') loadPayroll();
+            if (sectionName === 'employees') loadEmployees();
+            if (sectionName === 'dashboard') loadDashboard();
+        }
+
+        function loadDashboard() {
+            // Calculate metrics
+            const totalRevenue = appData.trips.reduce((sum, t) => sum + t.gross_revenue, 0);
+            const totalExpenses = appData.transactions.reduce((sum, t) => sum + t.amount, 0);
+            const dieselCost = appData.trips.reduce((sum, t) => sum + t.diesel_cost, 0);
+            const activeTrips = appData.trips.filter(t => t.status === 'En route' || t.status === 'Loaded').length;
+
+            document.getElementById('total-revenue').textContent = totalRevenue.toLocaleString();
+            document.getElementById('net-profit').textContent = (totalRevenue - totalExpenses).toLocaleString();
+            document.getElementById('diesel-cost').textContent = dieselCost.toLocaleString();
+            document.getElementById('active-trips').textContent = activeTrips;
+            document.getElementById('trip-count').textContent = appData.trips.length;
+
+            // Top trucks
+            const truckPerformance = {};
+            appData.trips.forEach(trip => {
+                if (!truckPerformance[trip.truck_no_std]) {
+                    truckPerformance[trip.truck_no_std] = { net: 0, trips: 0 };
+                }
+                truckPerformance[trip.truck_no_std].net += trip.net;
+                truckPerformance[trip.truck_no_std].trips += 1;
+            });
+
+            const sortedTrucks = Object.entries(truckPerformance)
+                .sort((a, b) => b[1].net - a[1].net)
+                .slice(0, 5);
+
+            const topTrucksHtml = sortedTrucks.map(([truck, data]) => `
+                <div class="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-truck text-blue-400"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium">${truck}</p>
+                            <p class="text-xs text-gray-400">${data.trips} trips</p>
+                        </div>
+                    </div>
+                    <span class="font-bold text-green-400">ZMW ${Math.floor(data.net).toLocaleString()}</span>
+                </div>
+            `).join('');
+
+            document.getElementById('top-trucks-list').innerHTML = topTrucksHtml;
+
+            // Recent trips
+            const recentTrips = appData.trips.slice(-5).reverse();
+            const recentHtml = recentTrips.map(trip => `
+                <div class="flex items-center justify-between p-3 hover:bg-gray-800/50 rounded-lg transition">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 ${trip.trip_type === 'Export' ? 'bg-purple-500/20' : 'bg-blue-500/20'} rounded-lg flex items-center justify-center">
+                            <i class="fas fa-${trip.trip_type === 'Export' ? 'ship' : 'truck'} ${trip.trip_type === 'Export' ? 'text-purple-400' : 'text-blue-400'}"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium">${trip.origin} → ${trip.destination}</p>
+                            <p class="text-xs text-gray-400">${trip.truck_no_std} • ${trip.date}</p>
+                        </div>
+                    </div>
+                    <span class="status-badge status-${trip.status.toLowerCase().replace(' ', '')}">${trip.status}</span>
+                </div>
+            `).join('');
+
+            document.getElementById('recent-trips-list').innerHTML = recentHtml;
+
+            // Initialize charts
+            initCharts();
+        }
+
+        function loadTrips() {
+            const tbody = document.getElementById('trips-table-body');
+            const filterType = document.getElementById('trip-filter-type')?.value || '';
+            const filterStatus = document.getElementById('trip-filter-status')?.value || '';
+
+            let filtered = appData.trips;
+            if (filterType) filtered = filtered.filter(t => t.trip_type === filterType);
+            if (filterStatus) filtered = filtered.filter(t => t.status === filterStatus);
+
+            tbody.innerHTML = filtered.map(trip => `
+                <tr class="hover-row transition">
+                    <td class="py-4 px-6">
+                        <span class="font-mono text-blue-400">#${trip.id.toString().padStart(3, '0')}</span>
+                        <span class="ml-2 text-xs px-2 py-1 rounded bg-gray-800">${trip.trip_type}</span>
+                    </td>
+                    <td class="py-4 px-6 text-sm">${trip.date}</td>
+                    <td class="py-4 px-6 font-medium">${trip.truck_no_std}</td>
+                    <td class="py-4 px-6 text-sm">${trip.driver_name}</td>
+                    <td class="py-4 px-6 text-sm">${trip.origin} → ${trip.destination}</td>
+                    <td class="py-4 px-6">
+                        <span class="text-xs px-2 py-1 rounded bg-gray-800">${trip.product}</span>
+                    </td>
+                    <td class="py-4 px-6 text-right font-medium text-green-400">
+                        ZMW ${Math.floor(trip.net).toLocaleString()}
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                        <span class="status-badge status-${trip.status.toLowerCase().replace(' ', '')}">${trip.status}</span>
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                        <button class="text-gray-400 hover:text-white mx-1"><i class="fas fa-edit"></i></button>
+                        <button class="text-gray-400 hover:text-blue-400 mx-1"><i class="fab fa-whatsapp"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadTrucks() {
+            const grid = document.getElementById('trucks-grid');
+            grid.innerHTML = appData.trucks.map(truck => {
+                const profit = truck.revenue - truck.expenses;
+                const profitClass = profit > 0 ? 'text-green-400' : 'text-red-400';
+
+                return `
+                <div class="truck-card glass-panel rounded-2xl p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-truck text-white text-2xl"></i>
+                        </div>
+                        <span class="status-badge ${truck.status === 'Active' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}">
+                            ${truck.status}
+                        </span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-1">${truck.truck_no_std}</h3>
+                    <p class="text-sm text-gray-400 mb-4">${truck.total_trips} Total Trips</p>
+
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Revenue</span>
+                            <span class="font-medium">ZMW ${truck.revenue.toLocaleString()}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Expenses</span>
+                            <span class="font-medium">ZMW ${truck.expenses.toLocaleString()}</span>
+                        </div>
+                        <div class="flex justify-between text-sm pt-3 border-t border-gray-700">
+                            <span class="text-gray-400">Net Profit</span>
+                            <span class="font-bold ${profitClass}">ZMW ${profit.toLocaleString()}</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-gray-700 flex gap-2">
+                        <button class="flex-1 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 py-2 rounded-lg text-sm transition">
+                            View Details
+                        </button>
+                        <button class="flex-1 bg-gray-800 hover:bg-gray-700 py-2 rounded-lg text-sm transition">
+                            Service History
+                        </button>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        function loadExpenses() {
+            const tbody = document.getElementById('expenses-table-body');
+            tbody.innerHTML = appData.transactions.map(t => `
+                <tr class="hover-row">
+                    <td class="py-3 px-4 text-sm">${t.date}</td>
+                    <td class="py-3 px-4 font-medium">${t.entity}</td>
+                    <td class="py-3 px-4 text-sm">${t.description}</td>
+                    <td class="py-3 px-4">
+                        <span class="text-xs px-2 py-1 rounded bg-gray-800">${t.category}</span>
+                    </td>
+                    <td class="py-3 px-4 text-right text-red-400 font-medium">
+                        -ZMW ${t.amount.toLocaleString()}
+                    </td>
+                </tr>
+            `).join('');
+
+            // Expense chart
+            const ctx = document.getElementById('expenseChart');
+            if (ctx) {
+                const categories = {};
+                appData.transactions.forEach(t => {
+                    categories[t.category] = (categories[t.category] || 0) + t.amount;
+                });
+
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(categories),
+                        datasets: [{
+                            data: Object.values(categories),
+                            backgroundColor: ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#6b7280']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { color: '#9ca3af' } }
+                        }
+                    }
+                });
+            }
+        }
+
+        function loadPayroll() {
+            const tbody = document.getElementById('payroll-table-body');
+            tbody.innerHTML = appData.payroll.map(p => `
+                <tr class="hover-row">
+                    <td class="py-4 px-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-sm font-bold">
+                                ${p.name.split(' ').map(n => n[0]).join('')}
+                            </div>
+                            <span class="font-medium">${p.name}</span>
+                        </div>
+                    </td>
+                    <td class="py-4 px-6 text-sm">${p.position}</td>
+                    <td class="py-4 px-6 text-sm">${p.truck || '-'}</td>
+                    <td class="py-4 px-6 text-right">ZMW ${p.gross_pay.toFixed(2)}</td>
+                    <td class="py-4 px-6 text-right text-red-400">ZMW ${p.deductions.toFixed(2)}</td>
+                    <td class="py-4 px-6 text-right font-bold">ZMW ${p.net_pay.toFixed(2)}</td>
+                    <td class="py-4 px-6 text-center">
+                        <span class="status-badge bg-green-500/20 text-green-400">${p.status}</span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadEmployees() {
+            const grid = document.getElementById('employees-grid');
+            grid.innerHTML = appData.employees.map(emp => `
+                <div class="glass-panel rounded-2xl p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center text-xl font-bold">
+                            ${emp.name.split(' ').map(n => n[0]).join('')}
+                        </div>
+                        <span class="status-badge ${emp.status === 'Active' ? 'bg-green-500/20 text-green-400' : 'bg-gray-700 text-gray-400'}">
+                            ${emp.status}
+                        </span>
+                    </div>
+                    <h3 class="text-lg font-bold mb-1">${emp.name}</h3>
+                    <p class="text-sm text-gray-400 mb-4">${emp.position}</p>
+
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center gap-2 text-gray-400">
+                            <i class="fas fa-truck w-4"></i>
+                            <span>${emp.truck || 'No truck assigned'}</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-gray-400">
+                            <i class="fas fa-phone w-4"></i>
+                            <span>${emp.phone}</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-gray-400">
+                            <i class="fas fa-money-bill w-4"></i>
+                            <span>ZMW ${emp.salary}/month</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-gray-700 flex gap-2">
+                        <button class="flex-1 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 py-2 rounded-lg text-sm">
+                            Edit
+                        </button>
+                        <button class="flex-1 bg-gray-800 hover:bg-gray-700 py-2 rounded-lg text-sm">
+                            View Trips
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function initCharts() {
+            const ctx = document.getElementById('revenueChart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Revenue',
+                            data: [450000, 520000, 480000, 600000, 580000, 650000],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }, {
+                            label: 'Expenses',
+                            data: [320000, 380000, 350000, 420000, 400000, 450000],
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { labels: { color: '#9ca3af' } }
+                        },
+                        scales: {
+                            y: {
+                                ticks: { color: '#9ca3af' },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                            },
+                            x: {
+                                ticks: { color: '#9ca3af' },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function openModal(modalName) {
+            document.getElementById('modal-' + modalName).classList.remove('hidden');
+            document.getElementById('modal-' + modalName).classList.add('flex');
+
+            // Populate selects
+            if (modalName === 'newTrip') {
+                const truckSelect = document.getElementById('new-trip-truck');
+                truckSelect.innerHTML = appData.trucks.map(t => 
+                    `<option value="${t.truck_no_std}">${t.truck_no_std}</option>`
+                ).join('');
+
+                const driverSelect = document.getElementById('new-trip-driver');
+                driverSelect.innerHTML = appData.employees.map(e => 
+                    `<option value="${e.name}">${e.name}</option>`
+                ).join('');
+            }
+        }
+
+        function closeModal(modalName) {
+            document.getElementById('modal-' + modalName).classList.add('hidden');
+            document.getElementById('modal-' + modalName).classList.remove('flex');
+        }
+
+        function saveTrip() {
+            const newTrip = {
+                id: appData.trips.length + 1,
+                trip_type: document.getElementById('new-trip-type').value,
+                date: document.getElementById('new-trip-date').value,
+                truck_no_std: document.getElementById('new-trip-truck').value,
+                driver_name: document.getElementById('new-trip-driver').value,
+                origin: document.getElementById('new-trip-origin').value,
+                destination: document.getElementById('new-trip-destination').value,
+                product: document.getElementById('new-trip-product').value,
+                cargo_qty: parseFloat(document.getElementById('new-trip-qty').value) || 0,
+                rate: parseFloat(document.getElementById('new-trip-rate').value) || 0,
+                diesel_cost: parseFloat(document.getElementById('new-trip-diesel').value) || 0,
+                mileage_cost: parseFloat(document.getElementById('new-trip-mileage').value) || 0,
+                gross_revenue: 0,
+                net: 0,
+                status: 'Planned',
+                client: document.getElementById('new-trip-client').value
+            };
+
+            newTrip.gross_revenue = newTrip.cargo_qty * newTrip.rate;
+            newTrip.net = newTrip.gross_revenue - newTrip.diesel_cost - newTrip.mileage_cost;
+
+            appData.trips.push(newTrip);
+            closeModal('newTrip');
+            loadTrips();
+            loadDashboard();
+
+            // Show success message
+            alert('Trip created successfully!');
+        }
+
+        function exportTrips() {
+            alert('Exporting to Excel... (In real app, this would download a file)');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeData();
+
+            // Set current date
+            const now = new Date();
+            document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', { 
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+            });
+
+            // Set default date in new trip form
+            document.getElementById('new-trip-date').valueAsDate = new Date();
+
+            // Load dashboard
+            loadDashboard();
+
+            // Search functionality
+            document.getElementById('trip-search')?.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const rows = document.querySelectorAll('#trips-table-body tr');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? '' : 'none';
+                });
+            });
+
+            // Filter functionality
+            document.getElementById('trip-filter-type')?.addEventListener('change', loadTrips);
+            document.getElementById('trip-filter-status')?.addEventListener('change', loadTrips);
+        });
+    </script>
+</body>
+</html>
